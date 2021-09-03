@@ -1,0 +1,64 @@
+# app and org for use with dashboard.serverless.com
+service: tnc-user-auth # also creates the stack name in AWS
+
+# service: ncs-data-api
+frameworkVersion: "2"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: dev
+  region: us-east-1
+  # memorySize:
+  vpc:
+    securityGroupIds:
+      - sg-076fa7fbee2a0b39e
+    subnetIds:
+      - subnet-028fc6646ff3c201a
+
+functions:
+  express:
+    handler: app/app.handler
+    warmup:
+      officeHoursWarmer:
+        enabled: true
+    events:
+      - http:
+          path: /
+          method: ANY
+          cors:
+            origin: "*"
+      - http:
+          path: /{proxy+}
+          method: ANY
+          cors:
+            origin: "*"
+          caching:
+            enabled: false
+            cacheKeyParameters:
+              - name: request.path.proxy
+
+plugins:
+  - serverless-plugin-warmup
+  - serverless-api-gateway-caching
+custom:
+  warmup:
+    officeHoursWarmer:
+      enabled: true
+      events:
+        #- schedule: cron(0/5 8-17 ? * MON-FRI *) # 8-5 GMT is 3-12 CST
+        - schedule: cron(0/5 14-22 ? * MON-FRI *) # 9-5 CST
+      concurrency: 10
+    outOfOfficeHoursWarmer:
+      enabled: false
+      events:
+        - schedule: cron(0/5 0-7 ? * MON-FRI *)
+        - schedule: cron(0/5 18-23 ? * MON-FRI *)
+        - schedule: cron(0/5 * ? * SAT-SUN *)
+      concurrency: 1
+    testWarmer:
+      enabled: false
+
+  # Enable or disable caching globally
+  apiGatewayCaching:
+    enabled: false
