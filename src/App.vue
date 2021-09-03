@@ -116,7 +116,7 @@ export default {
     },
     login() {
       msalInstance.loginPopup({
-        redirectUri: "http://localhost:8080/",
+        redirectUri: "https://lams-microsoft-node-auth.netlify.app/",
       });
       // const myAccounts = msalInstance.getAllAccounts();
       this.isLoggedIn = true;
