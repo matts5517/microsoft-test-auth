@@ -24,7 +24,7 @@ exports.getPrivate = async (req, res, next) => {
       Name: name,
       email: email,
       msg:
-        "This data is coming from a NodeJs server after the users IdToken is verified. IdToken is verfied using a jwt public and private key, exp datetime, and matching aud values. The process is documented here: https://nicksnettravels.builttoroam.com/post-2017-01-24-verifying-azure-active-directory-jwt-tokens-aspx/",
+        "This data is coming from a NodeJs server after the users IdToken is verified. IdToken is verfied using a jwt public and private key, exp datetime, and matching aud values.",
     },
   });
 };

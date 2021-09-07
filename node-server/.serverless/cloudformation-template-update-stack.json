@@ -181,7 +181,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/tnc-user-auth/dev/1630699072543-2021-09-03T19:57:52.543Z/tnc-user-auth.zip"
+          "S3Key": "serverless/tnc-user-auth/dev/1630700171953-2021-09-03T20:16:11.953Z/tnc-user-auth.zip"
         },
         "Handler": "app/app.handler",
         "Runtime": "nodejs14.x",
@@ -214,7 +214,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/tnc-user-auth/dev/1630699072543-2021-09-03T19:57:52.543Z/warmUpPluginOfficeHoursWarmer.zip"
+          "S3Key": "serverless/tnc-user-auth/dev/1630700171953-2021-09-03T20:16:11.953Z/warmUpPluginOfficeHoursWarmer.zip"
         },
         "Handler": ".warmup/officeHoursWarmer/index.warmUp",
         "Runtime": "nodejs14.x",
@@ -253,14 +253,14 @@
         "Description": "Serverless WarmUp Plugin (warmer \"officeHoursWarmer\")"
       }
     },
-    "ExpressLambdaVersionwkgwE7Ob81ESfXOMhx5zf34SaoQ1vxBqkhPKyLgBI": {
+    "ExpressLambdaVersion0Ij8kLAVQE8RZGlcojnYkh8U1LwfTOEQ5VYFt0kGw": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "ExpressLambdaFunction"
         },
-        "CodeSha256": "NI4QyDMzYCqf7vRm1cnrQZODKrw2dtRVzCMgm0PvL7g="
+        "CodeSha256": "5O+mBzSQl2pBsq7BThTVrRqLEc7d34Ve3dLL8XYkhjE="
       }
     },
     "WarmUpPluginOfficeHoursWarmerEventsRuleSchedule1": {
@@ -515,7 +515,7 @@
         "ExpressLambdaPermissionApiGateway"
       ]
     },
-    "ApiGatewayDeployment1630699054531": {
+    "ApiGatewayDeployment1630700153695": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -688,7 +688,7 @@
     "ExpressLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "ExpressLambdaVersionwkgwE7Ob81ESfXOMhx5zf34SaoQ1vxBqkhPKyLgBI"
+        "Ref": "ExpressLambdaVersion0Ij8kLAVQE8RZGlcojnYkh8U1LwfTOEQ5VYFt0kGw"
       },
       "Export": {
         "Name": "sls-tnc-user-auth-dev-ExpressLambdaFunctionQualifiedArn"
