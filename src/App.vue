@@ -79,21 +79,33 @@ const msalConfig = {
 // const publicClientApplication = new msal.PublicClientApplication(msalConfig);
 const msalInstance = new msal.PublicClientApplication(msalConfig);
 
-// const accessTokenRequest = {
-//   scopes: ["user.read"],
-//   account: user,
-// };
-// msalInstance
-//   .acquireTokenSilent(accessTokenRequest)
-//   .then(function(accessTokenResponse) {
-//     // Acquire token silent success
-//     let accessToken = accessTokenResponse.accessToken;
-//     console.log(accessToken);
-//     // Call your API with token
-//     // callApi(accessToken);
-//   });
-// // const test = msalInstance.acquireTokenSilent();
-// // console.log(test);
+const loginRequest = {
+  scopes: [
+    "api://043dbbb8-211c-43f2-af74-fb062d385968/Users.Read",
+    "openid",
+    "profile",
+  ],
+  forceRefresh: true,
+};
+
+const myAccount = msalInstance.getAllAccounts()[0];
+console.log(myAccount);
+
+const account = msalInstance.getAccountByUsername(myAccount.username);
+loginRequest.account = account;
+console.log(loginRequest);
+// this refreshes the token in sessionStorage and returns a new id token also.
+// we should check the current id token and only do a refresh when needed.
+msalInstance
+  .acquireTokenSilent(loginRequest)
+  .then((tokenRes) => {
+    console.log(tokenRes);
+  })
+  .catch((err) => {
+    console.log(err);
+    // open login popup here is silent token fails
+    this.login();
+  });
 
 export default {
   name: "App",
@@ -102,10 +114,10 @@ export default {
       isLoggedIn: false,
       publicApiData: "",
       privateApiData: "",
-      endpointUrl:
-        "https://wlffgqpqv0.execute-api.us-east-1.amazonaws.com/dev/",
+      // endpointUrl:"https://wlffgqpqv0.execute-api.us-east-1.amazonaws.com/dev/",
+      endpointUrl: "http://localhost:3000/",
       error: "",
-      // endpontUrl: "https://5rvymzjnw8.execute-api.us-east-1.amazonaws.com/dev/",
+      username: "",
     };
   },
 
@@ -115,13 +127,35 @@ export default {
       this.isLoggedIn = false;
     },
     login() {
-      msalInstance.loginPopup({
-        redirectUri: "https://lams-microsoft-node-auth.netlify.app/",
-      });
+      msalInstance
+        .loginPopup({
+          // redirectUri: "https://lams-microsoft-node-auth.netlify.app/",
+          redirectUri: "http://localhost:8080/",
+        })
+        .then((response) => {
+          console.log(response);
+          this.username = response.account.username;
+        });
       // const myAccounts = msalInstance.getAllAccounts();
       this.isLoggedIn = true;
     },
+    getTokenSilent() {
+      const account = msalInstance.getAccountByUsername(this.username);
+      loginRequest.account = account;
+      console.log(loginRequest);
+      msalInstance
+        .acquireTokenSilent(loginRequest)
+        .then((tokenRes) => {
+          console.log(tokenRes);
+        })
+        .catch((err) => {
+          console.log(err);
+          // open login popup here is silent token fails
+          this.login();
+        });
+    },
     getPublicData() {
+      this.getTokenSilent();
       axios
         .get(this.endpointUrl + `public`, {
           // headers: {
@@ -142,9 +176,13 @@ export default {
         });
     },
     async getPrivateData() {
+      // check to see if idToken has expired and if it has, call the login popup to redirect
+      this.login();
       this.error = "";
       try {
-        const idToken = await this.getIdToken();
+        console.log("beofre id token");
+        const idToken = await this.getAccessToken();
+        console.log(idToken);
         axios
           .get(this.endpointUrl + `private`, {
             headers: {
@@ -179,6 +217,39 @@ export default {
         tenantId +
         "-";
 
+      return JSON.parse(window.sessionStorage[sessionStorageKey]).secret;
+    },
+    async getAccessToken() {
+      const myAccount = msalInstance.getAllAccounts()[0];
+      const tenantId = myAccount.tenantId;
+      const localAccountId = myAccount.localAccountId;
+      const aud = myAccount.idTokenClaims.aud;
+      const sessionStorageKey =
+        localAccountId +
+        "." +
+        tenantId +
+        "-login.windows.net-idtoken-" +
+        aud +
+        "-" +
+        tenantId +
+        "-";
+
+      const accessTokenKey =
+        localAccountId +
+        "." +
+        tenantId +
+        "-login.windows.net-accesstoken-" +
+        aud +
+        "-" +
+        tenantId +
+        "-openid profile email";
+
+      console.log(accessTokenKey, sessionStorageKey);
+
+      // let key =
+      //   "efe5cb72-f05f-411e-9a05-2c02e9b4200e.79be6dc1-d78e-4bbb-b22b-d994c0a417a7-login.windows.net-accesstoken-043dbbb8-211c-43f2-af74-fb062d385968-79be6dc1-d78e-4bbb-b22b-d994c0a417a7-openid profile email";
+
+      console.log(window.sessionStorage[sessionStorageKey].secret);
       return JSON.parse(window.sessionStorage[sessionStorageKey]).secret;
     },
   },

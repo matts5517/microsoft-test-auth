@@ -5,6 +5,7 @@ const jwkToPem = require("jwk-to-pem");
 // protect routes
 exports.protect = async (req, res, next) => {
   var token = req.get("Authorization");
+  console.log(token);
   if (!token) {
     const error = new Error("No Token Sent in Auth Header");
     error.statusCode = 401;
@@ -156,21 +157,24 @@ exports.validateToken = async function(token, callback) {
     pems[key_id] = pem;
   }
   var decodedJwt = jwt.decode(token, { complete: true });
+  console.log(decodedJwt);
   if (!decodedJwt) {
     console.log("Not a valid JWT token");
     callback(new Error("Not a valid JWT token"));
     return;
   }
   let kid = decodedJwt.header.kid;
+  // console.log(pems);
   pem = pems[kid];
+  console.log(pem);
   if (!pem) {
-    console.log("Invalid token");
+    console.log("Invalid token, bad pem");
     callback(new Error("Invalid token"));
     return;
   }
   jwt.verify(token, pem, function(err, payload) {
     if (err) {
-      console.log("Invalid Token.");
+      console.log("Invalid Token. could not be verfified");
       callback(new Error("Invalid token"));
       return;
     } else {
