@@ -200,8 +200,6 @@ export default {
         });
     },
     async getPrivateData() {
-      // check to see if idToken has expired and if it has, call the login popup to redirect
-      this.login();
       this.error = "";
       try {
         console.log("beofre id token");
