@@ -190,9 +190,6 @@ export default {
         .then((response) => {
           console.log(response.data.data);
           this.publicApiData = response.data.data;
-          // context.commit("setUserAreas", response.data.data);
-          // // load my ncs areas to mapbox map
-          // context.dispatch("loadMyAreasToMap");
         })
         // if error
         .catch((err) => {
