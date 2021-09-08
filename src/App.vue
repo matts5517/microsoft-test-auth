@@ -114,8 +114,11 @@ export default {
       isLoggedIn: false,
       publicApiData: "",
       privateApiData: "",
-      // endpointUrl:"https://wlffgqpqv0.execute-api.us-east-1.amazonaws.com/dev/",
-      endpointUrl: "http://localhost:3000/",
+      endpointUrl:
+        "https://wlffgqpqv0.execute-api.us-east-1.amazonaws.com/dev/",
+      // endpointUrl: "http://localhost:3000/",
+      redirectUri: "https://lams-microsoft-node-auth.netlify.app/",
+      // redirectUri: "http://localhost:8080/",
       error: "",
       username: "",
     };
@@ -129,8 +132,7 @@ export default {
     login() {
       msalInstance
         .loginPopup({
-          // redirectUri: "https://lams-microsoft-node-auth.netlify.app/",
-          redirectUri: "http://localhost:8080/",
+          redirectUri: this.redirectUri,
         })
         .then((response) => {
           console.log(response);
