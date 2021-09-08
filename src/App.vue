@@ -28,6 +28,18 @@
       </div>
     </header>
     <div class="body">
+      <div style="width:300px;">
+        <p>Get new token silent method</p>
+
+        <button
+          class="btn btn-outline-success btn-sm"
+          type="button"
+          @click="getTokenSilent"
+        >
+          Get New Token
+        </button>
+        {{ idTokenClaims }}
+      </div>
       <div class="card">
         <div class="card-title">Public API Route</div>
         <p>
@@ -88,24 +100,25 @@ const loginRequest = {
   forceRefresh: true,
 };
 
-const myAccount = msalInstance.getAllAccounts()[0];
-console.log(myAccount);
+// ******* this code works ***********
+// const myAccount = msalInstance.getAllAccounts()[0];
+// console.log(myAccount);
 
-const account = msalInstance.getAccountByUsername(myAccount.username);
-loginRequest.account = account;
-console.log(loginRequest);
-// this refreshes the token in sessionStorage and returns a new id token also.
-// we should check the current id token and only do a refresh when needed.
-msalInstance
-  .acquireTokenSilent(loginRequest)
-  .then((tokenRes) => {
-    console.log(tokenRes);
-  })
-  .catch((err) => {
-    console.log(err);
-    // open login popup here is silent token fails
-    this.login();
-  });
+// const account = msalInstance.getAccountByUsername(myAccount.username);
+// loginRequest.account = account;
+// console.log(loginRequest);
+// // this refreshes the token in sessionStorage and returns a new id token also.
+// // we should check the current id token and only do a refresh when needed.
+// msalInstance
+//   .acquireTokenSilent(loginRequest)
+//   .then((tokenRes) => {
+//     console.log(tokenRes);
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//     // open login popup here is silent token fails
+//     this.login();
+//   });
 
 export default {
   name: "App",
@@ -121,6 +134,7 @@ export default {
       // redirectUri: "http://localhost:8080/",
       error: "",
       username: "",
+      idTokenClaims: "",
     };
   },
 
@@ -142,13 +156,21 @@ export default {
       this.isLoggedIn = true;
     },
     getTokenSilent() {
-      const account = msalInstance.getAccountByUsername(this.username);
-      loginRequest.account = account;
-      console.log(loginRequest);
+      try {
+        const myAccount = msalInstance.getAllAccounts()[0];
+        console.log(myAccount);
+        const account = msalInstance.getAccountByUsername(myAccount.username);
+        loginRequest.account = account;
+        console.log(loginRequest);
+      } catch (error) {
+        this.login();
+      }
+
       msalInstance
         .acquireTokenSilent(loginRequest)
         .then((tokenRes) => {
           console.log(tokenRes);
+          this.idTokenClaims = tokenRes.idTokenClaims;
         })
         .catch((err) => {
           console.log(err);
@@ -157,7 +179,7 @@ export default {
         });
     },
     getPublicData() {
-      this.getTokenSilent();
+      // this.getTokenSilent();
       axios
         .get(this.endpointUrl + `public`, {
           // headers: {
