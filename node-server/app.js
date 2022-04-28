@@ -1,31 +1,32 @@
-require("dotenv").config();
-const serverless = require("serverless-http");
-const express = require("express");
-const cors = require("cors");
-const jwt = require("jsonwebtoken");
-const jwkToPem = require("jwk-to-pem");
-const passport = require("passport");
+require('dotenv').config();
+const serverless = require('serverless-http');
+const express = require('express');
+const cors = require('cors');
+const jwt = require('jsonwebtoken');
+const jwkToPem = require('jwk-to-pem');
 
-const BearerStrategy = require("passport-azure-ad").BearerStrategy;
+const passport = require('passport');
+
+const BearerStrategy = require('passport-azure-ad').BearerStrategy;
 
 const config = {
   credentials: {
-    tenantID: "79be6dc1-d78e-4bbb-b22b-d994c0a417a7",
-    clientID: "043dbbb8-211c-43f2-af74-fb062d385968",
-    audience: "043dbbb8-211c-43f2-af74-fb062d385968",
+    tenantID: '79be6dc1-d78e-4bbb-b22b-d994c0a417a7',
+    clientID: '043dbbb8-211c-43f2-af74-fb062d385968',
+    audience: '043dbbb8-211c-43f2-af74-fb062d385968',
   },
   resource: {
     // scope: ["openid", "profile", "email"],
   },
   metadata: {
-    authority: "login.microsoftonline.com",
-    discovery: ".well-known/openid-configuration",
-    version: "v2.0",
+    authority: 'login.microsoftonline.com',
+    discovery: '.well-known/openid-configuration',
+    version: 'v2.0',
   },
   settings: {
     validateIssuer: true,
     passReqToCallback: false,
-    loggingLevel: "info",
+    loggingLevel: 'info',
   },
 };
 
@@ -54,14 +55,14 @@ app.use(passport.initialize());
 
 passport.use(bearerStrategy);
 
-const routes = require("./router/router.js");
-app.use("/", routes);
+const routes = require('./router/router.js');
+app.use('/', routes);
 
 app.get(
-  "/",
-  passport.authenticate("oauth-bearer", { session: false }),
+  '/',
+  passport.authenticate('oauth-bearer', { session: false }),
   (req, res) => {
-    res.send({ msg: "catch all route, do nothing" });
+    res.send({ msg: 'catch all route, do nothing' });
   }
 );
 
